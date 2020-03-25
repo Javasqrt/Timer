@@ -4,11 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -22,6 +20,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String CHANNEL_1 = "channel1";
     private TextView txt;
     private EditText ets;
     private Button btn1, btn2,btn3;
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onFinish() {
+                            addNotification();
                             pb.setVisibility(View.GONE);
 
                             txt.setVisibility(View.VISIBLE);
@@ -125,6 +125,33 @@ public class MainActivity extends AppCompatActivity {
     private void  resetTimer(){
         if (pause = false){
             ets.setText("");
+        }
+
+    }
+    private void addNotification(){
+        createNotificationChannels();
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this,CHANNEL_1)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("Timer by Anton")
+                        .setContentText("TIMEOUT")
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setAutoCancel(true);
+
+
+        Notification notification = builder.build();
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
+    private void createNotificationChannels(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             NotificationChannel channel1 = new NotificationChannel(CHANNEL_1,"Channel 1",NotificationManager.IMPORTANCE_HIGH);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel1);
+
         }
 
     }
